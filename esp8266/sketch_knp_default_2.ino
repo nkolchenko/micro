@@ -1,17 +1,20 @@
-#include <LiquidCrystal_I2C.h>
+#include <LiquidCrystal_PCF8574.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
 
 ESP8266WiFiMulti WiFiMulti;
-LiquidCrystal_I2C lcd(0x3F, 20, 4);
+LiquidCrystal_PCF8574 lcd(0x3F);
+char lcdDisplay[4][20];           // 4 lines of 20 character buffer
 
 void setup() {
 
-  lcd.begin();
+  lcd.begin(20,4);
 
   // Turn on the backlight.
-  lcd.backlight();
-
+  lcd.setBacklight(255);
+  // prepare screen
+  lcd.home();
+  lcd.clear();
   // Move the cursor 5 characters to the right and zero characters down (line 1).
   lcd.setCursor(5, 0);
 
