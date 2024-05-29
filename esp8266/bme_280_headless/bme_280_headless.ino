@@ -11,11 +11,11 @@ WiFiClient TCP_Client;
 
 
 // WiFi parameters to be configured
-const char* ssid = ""; // Write here your router's username
-const char* password = ""; // Write here your router's passward
+const char* ssid = "Aussie Broadband 7232"; // Write here your router's username
+const char* password = "Reyadazigi"; // Write here your router's passward
 
 bool bme280_status;
-delayTime = 60000;
+int delayTime = 60000;
 unsigned char buffer[80];
 char humidity[5];
 unsigned int TCPPort = 2003;
@@ -63,23 +63,33 @@ void Send_Request_To_Server() {
   //dtostrf(10.5, 5, 1, humidity); // create a char[] out of the tNow
   //esp8266.cpu_temp 36.6 -1
   //result = ("esp8266.cpu_temp "+ humidity + " -1");
-  Serial.println(prepare_data("bme280.temp",bme.readTemperature()));
-  Serial.println(prepare_data("bme280.pressure",bme.readPressure() / 100.0F));
-  Serial.println(prepare_data("bme280.humidity",bme.readHumidity()));
-
+  
+  result = prepare_data("bme280.temp", bme.readTemperature());
   Serial.println(result);
+  TCP_Client.println(result);
+  
+  result = prepare_data("bme280.pressure", bme.readPressure() / 100.0F);
+  Serial.println(result);
+  TCP_Client.println(result);
+  
+  result = prepare_data("bme280.humidity", bme.readHumidity());
+  Serial.println(result);
+  TCP_Client.println(result);
+  
+  
   //TCP_Client.println(result);
  // TCP_Client.flush();                                     // Empty Bufffer 
   
 }
 
-void prepare_data (topic, value) {
+String prepare_data(String topic, float measurement) {
   // this crafts string like "esp8266.cpu_temp 36.6 -1"
-  payload = "";
+  String payload = "";
   payload += topic;
   payload += " ";
-  payload += value;
+  payload += measurement;
   payload += " -1";
+  return payload;
 }
 
 void Connect_To_Server() {
